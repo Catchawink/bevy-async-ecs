@@ -35,6 +35,9 @@ fn die<T, E: std::fmt::Debug>(e: E) -> T {
 }
 
 async fn recv_and_yield<T: Send>(receiver: Receiver<T>) -> T {
+
+	receiver.recv().await.unwrap()
+	/*
 	// info!("recv fn start");
 	info!("closed: {}", receiver.is_closed());
 	let recv_fut = receiver.recv();
@@ -49,7 +52,7 @@ async fn recv_and_yield<T: Send>(receiver: Receiver<T>) -> T {
 		} else {
 			future::yield_now().await;
 		}
-	}
+	} */
 }
 
 /// Adds asynchronous ECS operations to Bevy `App`s.
