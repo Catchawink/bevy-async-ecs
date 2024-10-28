@@ -106,16 +106,16 @@ impl CommandQueueSender {
 	/// the `Last` schedule.
 	pub async fn send_queue(&self, inner_queue: CommandQueue) {
 		// self.0.send(inner_queue).await.unwrap_or_else(die)
-		info!("closed: {}", self.0.is_closed());
+		//info!("closed: {}", self.0.is_closed());
 		if let Err(e) = self.0.send(inner_queue).await {
-			info!("Error: {:?}", e.into_inner());
+			//info!("Error: {:?}", e.into_inner());
 		}
 	}
 
 	/// Sends a (boxed) `Command` directly to the Bevy `World`, where they it be applied during
 	/// the `Last` schedule.
 	pub async fn send_single(&self, single: BoxedCommand) {
-		info!("closed: {}", self.0.is_closed());
+		//info!("closed: {}", self.0.is_closed());
 		self.send_queue(single.into()).await;
 	}
 }
@@ -128,14 +128,14 @@ impl Component for CommandQueueReceiver {
 
     fn register_component_hooks(hooks: &mut ComponentHooks) {
         hooks.on_remove(|mut world, entity, _| {
-            info!("receiver removed");
+            //info!("receiver removed");
         });
     }
 }
 
 pub fn print_receiver_state(receiver: Query<&CommandQueueReceiver>) {
 	for receiver in receiver.iter() {
-		info!("closed: {}", receiver.0.is_closed());
+		//info!("closed: {}", receiver.0.is_closed());
 	}
 }
 

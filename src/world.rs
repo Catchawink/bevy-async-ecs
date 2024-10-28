@@ -39,7 +39,7 @@ impl AsyncWorld {
 
 	/// Applies the given `Command` to the world.
 	pub async fn apply<C: Command>(&self, command: C) {
-		info!("closed: {}", self.0.0.is_closed());
+		//info!("closed: {}", self.0.0.is_closed());
 		self.0.send_single(BoxedCommand::new(command)).await
 	}
 
@@ -85,7 +85,7 @@ impl AsyncWorld {
 	/// which can be used to further manipulate the entity.
 	pub async fn spawn<B: Bundle>(&self, bundle: B) -> AsyncEntity {
 		let (command, receiver) = SpawnAndSendId::new(bundle);
-		info!("closed: {}", self.0.0.is_closed());
+		//info!("closed: {}", self.0.0.is_closed());
 		self.apply(command).await;
 		let id = recv_and_yield(receiver).await;
 		AsyncEntity::new(id, self.clone())
@@ -165,8 +165,8 @@ impl FromWorld for AsyncWorld {
 			CommandQueueReceiver::new(receiver),
 			Name::new("CommandQueueReceiver"),
 		));
-		info!("receiver spawned");
-		info!("closed: {}", sender.is_closed());
+		//info!("receiver spawned");
+		//info!("closed: {}", sender.is_closed());
 		CommandQueueSender::new(sender).into()
 	}
 }

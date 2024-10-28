@@ -17,19 +17,19 @@ fn main() {
 		.add_systems(Startup, |world: &mut World| {
 
 			let async_world = AsyncWorld::from_world(world);
-			info!("closed: {}", async_world.0.0.is_closed());
+			//info!("closed: {}", async_world.0.0.is_closed());
 	
 			let fut = async move {
 				//info!("future started");
 				let print_names = async_world.register_system(print_names).await;
 			
-				info!("closed: {}", async_world.0.0.is_closed());
+				//info!("closed: {}", async_world.0.0.is_closed());
 				//TimeoutFuture::new(1_000).await;
 				let entity = async_world.spawn_named("Frank").await;
 				//info!("closed: {}", async_world.0.0.is_closed());
 				print_names.run().await;
 				// entity.despawn().await;
-				info!("done! you can close the window");
+				//info!("done! you can close the window");
 			};
 
 			AsyncComputeTaskPool::get().spawn(fut).detach();
