@@ -1,12 +1,10 @@
 use crate::command::CommandQueueSender;
-use crate::util::{insert, remove};
+use crate::util::{despawn, insert, remove};
 use crate::wait_for::StartWaitingFor;
 use crate::world::AsyncWorld;
 use crate::{die, recv};
-use async_channel::{Receiver, Sender};
+use async_channel::{Receiver, Sender, TrySendError};
 use bevy_ecs::prelude::*;
-use bevy_ecs::world::Command;
-use bevy_hierarchy::DespawnRecursive;
 use std::fmt;
 
 /// Represents an `Entity` that can be manipulated asynchronously.
@@ -38,12 +36,7 @@ impl AsyncEntity {
 
 	/// Recursively despawns the represented entity.
 	pub async fn despawn(self) {
-		self.world
-			.apply(DespawnRecursive {
-				entity: self.id,
-				warn: false,
-			})
-			.await;
+		self.world.apply(despawn(self.id)).await;
 	}
 
 	/// Adds a `Bundle` of components to the entity. This will overwrite any previous value(s) of
@@ -131,7 +124,9 @@ impl<B: Bundle> SpawnAndSendId<B> {
 impl<B: Bundle> Command for SpawnAndSendId<B> {
 	fn apply(self, world: &mut World) {
 		let id = world.spawn(self.bundle).id();
-		self.sender.try_send(id).unwrap_or_else(die);
+		if let Err(e @ TrySendError::Full(_)) = self.sender.try_send(id) {
+			let _: () = die(e);
+		}
 	}
 }
 

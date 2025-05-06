@@ -1,8 +1,8 @@
 use crate::die;
 use async_channel::{Receiver, Sender, TryRecvError};
 use bevy_ecs::prelude::*;
-use bevy_ecs::world::{Command, CommandQueue};
-use bevy_utils::tracing::debug;
+use bevy_ecs::world::CommandQueue;
+use bevy_log::tracing::debug;
 use std::fmt;
 
 /// The object-safe equivalent of a `Box<dyn Command>`.

@@ -1,10 +1,8 @@
 use crate::die;
 use async_channel::{Receiver, Sender, TrySendError};
-use bevy_core::Name;
 use bevy_ecs::prelude::*;
 use bevy_ecs::system::{BoxedSystem, IntoSystem, SystemId};
-use bevy_ecs::world::Command;
-use bevy_utils::{HashMap, HashSet};
+use bevy_platform::collections::{HashMap, HashSet};
 use std::any::TypeId;
 use std::marker::PhantomData;
 
@@ -139,10 +137,9 @@ fn process_waiting_components<C: Component + Clone>(
 
 	for (id, waiting_for, target) in query.iter() {
 		if let Ok(component) = components.get(target.0) {
-			waiting_for
-				.0
-				.try_send(component.clone())
-				.unwrap_or_else(die);
+			if let Err(e @ TrySendError::Full(_)) = waiting_for.0.try_send(component.clone()) {
+				let _: () = die(e);
+			}
 			commands.entity(id).despawn();
 		}
 	}
@@ -160,10 +157,9 @@ fn process_waiting_resources<R: Resource + Clone>(
 
 	for (id, waiting_for) in query.iter() {
 		if let Some(resource) = &resource {
-			waiting_for
-				.0
-				.try_send((*resource).clone())
-				.unwrap_or_else(die);
+			if let Err(e @ TrySendError::Full(_)) = waiting_for.0.try_send((*resource).clone()) {
+				let _: () = die(e);
+			}
 			commands.entity(id).despawn();
 		}
 	}
@@ -213,8 +209,8 @@ pub(crate) fn initialize_waiters(mut commands: Commands) {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use bevy::diagnostic::FrameCount;
 	use bevy::prelude::*;
-	use bevy_core::FrameCount;
 
 	#[derive(Clone, Event)]
 	struct MyEvent;

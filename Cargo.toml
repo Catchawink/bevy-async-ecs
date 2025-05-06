@@ -2,7 +2,7 @@
 name = "bevy-async-ecs"
 version = "0.7.0"
 authors = ["Mark Old <dlom234@gmail.com>"]
-edition = "2021"
+edition = "2024"
 license = "MIT"
 description = "Asynchronous interface for Bevy ECS"
 repository = "https://github.com/dlom/bevy-async-ecs"
@@ -11,10 +11,9 @@ categories = ["game-engines", "asynchronous"]
 
 [dependencies]
 bevy_app = { git = "https://github.com/empathic-ai/bevy.git", branch = "reflect/serializable-dynamic-types", default-features = false }
-bevy_core = { git = "https://github.com/empathic-ai/bevy.git", branch = "reflect/serializable-dynamic-types", default-features = false }
-bevy_utils = { git = "https://github.com/empathic-ai/bevy.git", branch = "reflect/serializable-dynamic-types", default-features = false }
+bevy_log = { git = "https://github.com/empathic-ai/bevy.git", branch = "reflect/serializable-dynamic-types", default-features = false }
+bevy_platform = { git = "https://github.com/empathic-ai/bevy.git", branch = "reflect/serializable-dynamic-types", default-features = false }
 bevy_ecs = { git = "https://github.com/empathic-ai/bevy.git", branch = "reflect/serializable-dynamic-types", default-features = false }
-bevy_hierarchy = { git = "https://github.com/empathic-ai/bevy.git", branch = "reflect/serializable-dynamic-types", default-features = false, features = ["bevy_app"] }
 async-channel = "2"
 
 [dev-dependencies]

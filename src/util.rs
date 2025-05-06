@@ -1,6 +1,6 @@
+use bevy_ecs::observer::TriggerTargets;
 use bevy_ecs::prelude::*;
 use bevy_ecs::system::SystemId;
-use bevy_ecs::world::Command;
 
 pub(crate) fn insert<B: Bundle>(id: Entity, bundle: B) -> impl Command {
 	move |world: &mut World| {
@@ -11,6 +11,12 @@ pub(crate) fn insert<B: Bundle>(id: Entity, bundle: B) -> impl Command {
 pub(crate) fn remove<B: Bundle>(id: Entity) -> impl Command {
 	move |world: &mut World| {
 		world.entity_mut(id).remove::<B>();
+	}
+}
+
+pub(crate) fn despawn(id: Entity) -> impl Command {
+	move |world: &mut World| {
+		world.despawn(id);
 	}
 }
 
@@ -31,5 +37,14 @@ pub(crate) fn remove_system<I: SystemInput + 'static, O: 'static>(
 ) -> impl Command {
 	move |world: &mut World| {
 		let _ = world.unregister_system(system_id);
+	}
+}
+
+pub(crate) fn trigger_targets<E: Event, T: TriggerTargets + Send + Sync + 'static>(
+	event: E,
+	targets: T,
+) -> impl Command {
+	move |world: &mut World| {
+		world.trigger_targets(event, targets);
 	}
 }
